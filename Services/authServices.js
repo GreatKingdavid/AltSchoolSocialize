@@ -57,3 +57,5 @@ return {
     user: userWithoutpassword
 }
 }
+
+module.exports = {register}
