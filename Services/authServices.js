@@ -1,61 +1,56 @@
-const User = require('../models/User')
-const register = async (userData) => {
-    const {first_name, last_name, username, email, password} = userData
+const User = require('../models/User');
+const { generateAccessToken, generateRefreshToken } = require('../utils/jwtUtils');
 
+const register = async (userData) => {
+    const { first_name, last_name, username, email, password } = userData;
+
+    // 1. Validation: Professional error throwing
     if (!first_name || !last_name || !username || !email || !password) {
-        return {
-            success:false,
-            statusCode: 400,
-            message: 'Please provide all required fields'
-        }
+        const error = new Error('Please provide all required fields');
+        error.statusCode = 400;
+        throw error;
     }
 
     if (password.length < 8) {
-        return{
-            success:false,
-            statusCode: 400,
-            message: 'Password must be at least 8 characters'
-        }
+        const error = new Error('Password must be at least 8 characters');
+        error.statusCode = 400;
+        throw error;
     }
 
+    // 2. Conflict Check: Database lookup
     const existingUser = await User.findOne({
-        $or: [{email}, {username}]
-    })
+        $or: [{ email }, { username }]
+    });
 
-if (existingUser) {
-    let field = 'email'
-    if (existingUser.username === username) {
-        field = 'username'
+    if (existingUser) {
+        const field = existingUser.username === username ? 'username' : 'email';
+        const error = new Error(`User with this ${field} already exists`);
+        error.statusCode = 409;
+        throw error;
     }
 
-    return{
-        success: false,
-        statusCode: 409,
+    // 3. Create User
+    const newUser = await User.create({
+        first_name,
+        last_name,
+        username,
+        email,
+        password // The Model should handle the Bcrypt hashing automatically
+    });
 
-        message: `user with this ${field} already exists`
-    }
-}
+    // 4. Generate Tokens (Requirement: 1-hour access token)
+    const accessToken = generateAccessToken(newUser._id);
+    const refreshToken = generateRefreshToken(newUser._id);
 
-// create the user in database
-const newUser = await User.create({
-    first_name: first_name,
-    last_name: last_name,
-    username: username,
-    email: email,
-    password: password
-})
+    // 5. Cleanup: Remove password from the object for security
+    const userResponse = newUser.toObject();
+    delete userResponse.password;
 
-// remove password before sending back
-const userWithoutpassword = user.toObject()
-delete
-userWithoutpassword.password
+    return {
+        user: userResponse,
+        accessToken,
+        refreshToken
+    };
+};
 
-return {
-    success: true,
-    statusCode: 201,
-    message: `User created successfully`,
-    user: userWithoutpassword
-}
-}
-
-module.exports = {register}
+module.exports = { register };
