@@ -8,7 +8,7 @@ exports.follow = catchAsync(async (req, res, next) => {
 
     // A. Check: Don't follow yourself
     if (currentUserId.toString() === targetUserId) {
-        const error = new Error("Oga, you cannot follow yourself!");
+        const error = new Error("You cannot follow yourself!");
         error.statusCode = 400;
         return next(error);
     }

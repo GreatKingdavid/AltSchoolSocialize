@@ -16,7 +16,7 @@ exports.updatePost = catchAsync(async (req, res, next) => {
     
     // Ownership check (using .toString() for ID comparison)
     if (post.author.toString() !== req.user.toString()) {
-        const error = new Error("Oga, you don't own this post!");
+        const error = new Error("You don't own this post!");
         error.statusCode = 403;
         return next(error);
     }

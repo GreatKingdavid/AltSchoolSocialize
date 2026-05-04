@@ -16,11 +16,11 @@ exports.signup = catchAsync(async (req, res, next) => {
     });
 });
 
-// 2. SIGNIN (This was missing!)
+// 2. SIGNIN 
 exports.signin = catchAsync(async (req, res, next) => {
     const { email, password } = req.body;
     
-    // Call the loginUser function in your authService
+    // Call the loginUser function in our authService
     const result = await authService.loginUser(email, password);
 
     res.status(200).json({
