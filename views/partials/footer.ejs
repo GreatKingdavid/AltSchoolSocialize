@@ -1,0 +1,23 @@
+<script>
+        const token = localStorage.getItem('accessToken');
+        
+        // UI Toggle
+        const navProfile = document.getElementById('navProfile');
+        const navLogout = document.getElementById('navLogout');
+        const navLogin = document.getElementById('navLogin');
+        const navSignup = document.getElementById('navSignup');
+        
+        if (token) {
+            if (navProfile) navProfile.classList.remove('hidden');
+            if (navLogout) navLogout.classList.remove('hidden');
+            if (navLogin) navLogin.classList.add('hidden');
+            if (navSignup) navSignup.classList.add('hidden');
+        }
+        
+        function handleLogout() {
+            localStorage.removeItem('accessToken');
+            window.location.href = '/';
+        }
+    </script>
+</body>
+</html>

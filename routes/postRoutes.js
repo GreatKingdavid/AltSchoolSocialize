@@ -1,30 +1,49 @@
 const express = require('express');
 const router = express.Router();
 const postController = require('../controllers/postController');
-const { protect } = require('../middlewear/authMiddleware'); // The Bouncer
+const { protect, optionalAuth } = require('../middlewear/authMiddleware'); // Assuming you have these
 
-// --- PUBLIC ROUTES (No login required) ---
-// Requirement: Logged in and not logged in users can get posts
-router.get('/', postController.getAllPublished);
+// Public & Private Access
+router.get('/', postController.getAllPosts);
 router.get('/:id', postController.getSinglePost);
 
-// --- PROTECTED ROUTES (Login required) ---
-router.use(protect); // This protects EVERYTHING below this line
-
-// Requirement: Logged in users can create posts (starts as draft)
-router.post('/', postController.createNewPost);
-
-// Requirement: Owner can update state to 'published'
-router.patch('/:id/publish', postController.publishPost);
-
-// Requirement: Owner can edit or delete
+// Protected Access
+router.use(protect); 
+router.post('/', postController.createPost);
 router.patch('/:id', postController.updatePost);
 router.delete('/:id', postController.deletePost);
 
-// Requirement: Like/Unlike a post
-router.post('/:id/like', postController.likePost);
+exports.likePost = async (postId, userId) => {
+  const post = await Post.findByIdAndUpdate(
+    postId,
+    { $addToSet: { likes: userId } }, // Only adds if userId isn't already there
+    { new: true }
+  );
+  if (post) post.like_count = post.likes.length;
+  return await post.save();
+};
 
-// Requirement: Owner can get their own posts
-router.get('/my-posts', postController.getMyPosts);
+exports.unlikePost = async (postId, userId) => {
+  const post = await Post.findByIdAndUpdate(
+    postId,
+    { $pull: { likes: userId } }, // Removes the userId
+    { new: true }
+  );
+  if (post) post.like_count = post.likes.length;
+  return await post.save();
+};
+
+exports.getMyPosts = async (userId, state, page = 1) => {
+  const limit = 20;
+  const filter = { author: userId };
+  if (state) filter.state = state;
+
+  const posts = await Post.find(filter)
+    .sort({ createdAt: -1 })
+    .limit(limit)
+    .skip((page - 1) * limit);
+
+  return posts;
+};
 
 module.exports = router;

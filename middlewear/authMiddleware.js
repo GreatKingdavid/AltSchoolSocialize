@@ -1,31 +1,54 @@
-const { verifyAccessToken } = require('../utils/jwtUtils');
+const jwt = require('jsonwebtoken');
+const { promisify } = require('util');
+const User = require('../models/User');
+const catchAsync = require('../utils/catchAsync');
 
-const protect = (req, res, next) => {
- //  Get the "token" from the Header
- const authHeader = req.headers.authorization;
+exports.protect = catchAsync(async (req, res, next) => {
+  // 1) Get token from header
+  let accessToken;
+  if (req.headers.authorization?.startsWith('Bearer')) {
+    accessToken = req.headers.authorization.split(' ')[1];
+  }
 
- if (!authHeader || !authHeader.startsWith('Bearer')) {
- return res.status(401).json({ message: "unauthorized request!" });
- }
+  if (!accessToken) {
+    return res.status(401).json({ message: 'Authentication required. Please log in.' });
+  }
 
- //  Extract the actual token string
- const token = authHeader.split(' ')[1];
+  try {
+    // 2) Verify Access Token
+    // Using promisify makes the catch block cleaner for handling expirations
+    const decoded = await promisify(jwt.verify)(accessToken, process.env.JWT_ACCESS_SECRET);
 
- //   (Verify the Token)
- // This uses the Secret Key from your .env
- const decoded = verifyAccessToken(token);
+    // 3) Check if user still exists
+    const currentUser = await User.findById(decoded.id);
+    if (!currentUser) {
+      return res.status(401).json({ message: 'The user belonging to this token no longer exists.' });
+    }
 
- if (!decoded) {
- return res.status(401).json({ message: "This pass is fake or expired. Go back to login!" });
- }
+    // 4) Grant access
+    req.user = currentUser;
+    next();
+  } catch (err) {
+    if (err.name === 'TokenExpiredError') {
+      return res.status(401).json({
+        status: 'fail',
+        message: 'Access token expired',
+        code: 'ACCESS_TOKEN_EXPIRED' // Frontend checks for this code to trigger refresh
+      });
+    }
+    return res.status(401).json({ message: 'Invalid token. Please log in again.' });
+  }
+});
 
- //  ATTACH THE USER ID
- // I told the ID from inside the token and put it in 'req.user'
- // Now the Controller knows EXACTLY who is making the request.
- req.user = decoded.id;
-
- //  MOVE TO THE NEXT PERSON (The Controller)
- next();
-};
-
-module.exports = { protect };
+exports.optionalAuth = catchAsync(async (req, res, next) => {
+  if (req.headers.authorization?.startsWith('Bearer')) {
+    const token = req.headers.authorization.split(' ')[1];
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+      req.user = await User.findById(decoded.id);
+    } catch (e) {
+      req.user = null;
+    }
+  }
+  next();
+});

@@ -1,82 +1,43 @@
 const User = require('../models/User');
-const { generateAccessToken, generateRefreshToken } = require('../utils/jwtUtils');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 
-// This line ensures the function is exported
-exports.register = async (userData) => {
- const { first_name, last_name, username, email, password } = userData;
+// Helper to generate both tokens
+const signTokens = (id) => {
+  const accessToken = jwt.sign({ id }, process.env.JWT_ACCESS_SECRET, { 
+    expiresIn: process.env.JWT_ACCESS_EXPIRES_IN || '15m' 
+  });
 
- // 1. Validation: Check all fields exist
- if (!first_name || !last_name || !username || !email || !password) {
- const error = new Error('Please provide all required fields');
- error.statusCode = 400;
- throw error;
- }
+  const refreshToken = jwt.sign({ id }, process.env.JWT_REFRESH_SECRET, { 
+    expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d' 
+  });
 
- if (password.length < 8) {
- const error = new Error('Password must be at least 8 characters');
- error.statusCode = 400;
- throw error;
- }
-
- // 2. Conflict Check: Database lookup
- const existingUser = await User.findOne({
- $or: [{ email }, { username }]
- });
-
- if (existingUser) {
- const field = existingUser.username === username ? 'username' : 'email';
- const error = new Error(`User with this ${field} already exists`);
- error.statusCode = 409;
- throw error;
- }
-
- // 3. Create User
- const newUser = await User.create({
- first_name,
- last_name,
- username,
- email,
- password // The Model should handle bcrypt hashing automatically
- });
-
- // 4. Generate Tokens
- const accessToken = generateAccessToken(newUser._id);
- const refreshToken = generateRefreshToken(newUser._id);
-
- // 5. Cleanup: Remove password from the response object
- const userResponse = newUser.toObject();
- delete userResponse.password;
-
- return {
- user: userResponse,
- accessToken,
- refreshToken
- };
+  return { accessToken, refreshToken };
 };
 
-// 
-exports.loginUser = async (email, password) => {
-    // 1. Find user and manually select password (because we set select: false in the model)
-    const user = await User.findOne({ email }).select('+password');
+exports.signup = async (data) => {
+  const user = await User.create(data);
+  const { accessToken, refreshToken } = signTokens(user._id);
+  
+  // Optional: Save refreshToken to the user document in DB for security/logout
+  user.refreshToken = refreshToken;
+  await user.save({ validateBeforeSave: false });
 
-    // 2. If no user or password doesn't match
-    if (!user || !(await user.comparePassword(password))) {
-        const error = new Error('Invalid email or password');
-        error.statusCode = 401;
-        throw error;
-    }
+  return { user, accessToken, refreshToken };
+};
 
-    // 3. Generate new tokens
-    const accessToken = generateAccessToken(user._id);
-    const refreshToken = generateRefreshToken(user._id);
+exports.signin = async (email, password) => {
+  const user = await User.findOne({ email }).select('+password');
+  
+  if (!user || !(await bcrypt.compare(password, user.password))) {
+    throw new Error('Invalid email or password');
+  }
 
-    // 4. Cleanup
-    const userResponse = user.toObject();
-    delete userResponse.password;
+  const { accessToken, refreshToken } = signTokens(user._id);
 
-    return { 
-        user: userResponse, 
-        accessToken, 
-        refreshToken 
-    };
+  // Update the refresh token in the database
+  user.refreshToken = refreshToken;
+  await user.save({ validateBeforeSave: false });
+
+  return { user, accessToken, refreshToken };
 };

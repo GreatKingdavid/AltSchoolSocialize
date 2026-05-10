@@ -2,91 +2,74 @@ const postService = require('../Services/postService');
 const Post = require('../models/Post');
 const catchAsync = require('../utils/catchAsync');
 
-// --- 1. CREATE NEW POST ---
-exports.createNewPost = catchAsync(async (req, res, next) => {
-    const post = await postService.createPost(req.user, req.body);
-    res.status(201).json({ status: 'success', data: { post } });
+exports.createPost = catchAsync(async (req, res) => {
+  const post = await postService.createPost(req.body, req.user._id);
+  res.status(201).json({ status: 'success', data: post });
 });
 
-// --- 2. UPDATE POST (OWNER ONLY) ---
-exports.updatePost = catchAsync(async (req, res, next) => {
-    const post = await Post.findById(req.params.id);
-
-    if (!post) return next(new Error('Post not found'));
-    
-    // Ownership check (using .toString() for ID comparison)
-    if (post.author.toString() !== req.user.toString()) {
-        const error = new Error("You don't own this post!");
-        error.statusCode = 403;
-        return next(error);
-    }
-
-    const updatedPost = await Post.findByIdAndUpdate(req.params.id, req.body, { 
-        new: true, 
-        runValidators: true 
-    });
-    res.status(200).json({ status: 'success', data: { post: updatedPost } });
+exports.getAllPosts = catchAsync(async (req, res) => {
+  // Logic allows both logged-in and guests via the service
+  const result = await postService.getPosts(req.query);
+  res.status(200).json({ status: 'success', ...result });
 });
 
-// --- 3. PUBLISH POST (OWNER ONLY) ---
-exports.publishPost = catchAsync(async (req, res, next) => {
-    const post = await Post.findById(req.params.id);
+exports.updatePost = catchAsync(async (req, res) => {
+  const post = await Post.findOne({ _id: req.params.id, author: req.user._id });
+  if (!post) return res.status(404).json({ message: 'Post not found or unauthorized' });
 
-    if (!post) return next(new Error('Post not found'));
-    if (post.author.toString() !== req.user.toString()) {
-        const error = new Error("Unauthorized action");
-        error.statusCode = 403;
-        return next(error);
-    }
+  Object.assign(post, req.body);
+  await post.save();
+  res.status(200).json({ status: 'success', data: post });
 
-    post.state = 'published';
-    await post.save();
-    res.status(200).json({ status: 'success', message: 'Post is now live!', data: { post } });
 });
 
-// --- 4. GET ALL PUBLISHED ---
-exports.getAllPublished = catchAsync(async (req, res, next) => {
-    const posts = await postService.getPublishedPosts(req.query);
-    res.status(200).json({ status: 'success', results: posts.length, data: { posts } });
+// Add these if they are missing
+exports.getSinglePost = catchAsync(async (req, res) => {
+  const post = await Post.findById(req.params.id).populate('author', 'username first_name last_name');
+  if (!post) return res.status(404).json({ message: 'Post not found' });
+  res.status(200).json({ status: 'success', data: post });
 });
 
-// --- 5. LIKE/UNLIKE POST ---
-exports.likePost = catchAsync(async (req, res, next) => {
-    const post = await postService.toggleLike(req.params.id, req.user);
-    res.status(200).json({ status: 'success', data: { likes: post.like_count } });
+exports.deletePost = catchAsync(async (req, res) => {
+  const post = await Post.findOneAndDelete({ _id: req.params.id, author: req.user._id });
+  if (!post) return res.status(404).json({ message: 'Post not found or unauthorized' });
+  res.status(204).send();
 });
 
-// --- 6. DELETE POST (OWNER ONLY) ---
-exports.deletePost = catchAsync(async (req, res, next) => {
-    const post = await Post.findById(req.params.id);
-    
-    if (!post) return next(new Error('Post not found'));
-    if (post.author.toString() !== req.user.toString()) {
-        const error = new Error("You cannot delete this!");
-        error.statusCode = 403;
-        return next(error);
-    }
+exports.likePost = async (postId, userId) => {
+  const post = await Post.findByIdAndUpdate(
+    postId,
+    { $addToSet: { likes: userId } }, // Only adds if userId isn't already there
+    { new: true }
+  );
+  if (post) post.like_count = post.likes.length;
+  return await post.save();
+};
 
-    await Post.findByIdAndDelete(req.params.id);
-    res.status(204).json({ status: 'success', data: null });
-});
+exports.unlikePost = async (postId, userId) => {
+  const post = await Post.findByIdAndUpdate(
+    postId,
+    { $pull: { likes: userId } }, // Removes the userId
+    { new: true }
+  );
+  if (post) post.like_count = post.likes.length;
+  return await post.save();
+};
 
-// --- 7. GET SINGLE POST (Missing in your current code) ---
-exports.getSinglePost = catchAsync(async (req, res, next) => {
-    const post = await Post.findOne({ _id: req.params.id, state: 'published' })
-        .populate('author', 'first_name last_name username');
+exports.getMyPosts = async (userId, state, page = 1) => {
+  const limit = 20;
+  const filter = { author: userId };
+  if (state) filter.state = state;
 
-    if (!post) {
-        const error = new Error('Post not found or is still a draft');
-        error.statusCode = 404;
-        return next(error);
-    }
+  const posts = await Post.find(filter)
+    .sort({ createdAt: -1 })
+    .limit(limit)
+    .skip((page - 1) * limit);
 
-    res.status(200).json({ status: 'success', data: { post } });
-});
+  return posts;
+};
 
-// --- 8. GET LOGGED-IN USER'S POSTS (Missing in your current code) ---
-exports.getMyPosts = catchAsync(async (req, res, next) => {
-    const posts = await Post.find({ author: req.user });
-    res.status(200).json({ status: 'success', results: posts.length, data: { posts } });
+exports.getUserFeed = catchAsync(async (req, res) => {
+  const feed = await postService.getFeed(req.user._id, req.query.page);
+  res.status(200).json({ status: 'success', results: feed.length, data: feed });
 });
