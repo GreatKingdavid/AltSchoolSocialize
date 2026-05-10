@@ -259,7 +259,7 @@
  </div>
  <div class="tab-nav"><button class="tab-btn active">Explore</button></div>
  <div class="content-area" id="contentArea"></div>
- <div class="app-footer">Built by Kuku Mubaraq Afolabbi</div>
+ <div class="app-footer">Built by  Okwor Kingdavid</div>
  `;
  document.getElementById("loginLinkBtn").addEventListener("click", () => renderAuth("login", true));
  loadExplore();
@@ -287,7 +287,7 @@
  ${showGuestLink ? `<p id="guestLink" style="text-align:center; margin-top:1rem; cursor:pointer; opacity:0.6;">Continue as Guest</p>` : ""}
  <p id="authMsg" style="text-align:center; margin-top:1rem; color:red;"></p>
  </div>
- <div class="app-footer">Built by Kuku Mubaraq Afolabbi</div>
+ <div class="app-footer">Built by  Okwor Kingdavid</div>
  `;
  document.getElementById("toggleAuth").addEventListener("click", () => renderAuth(screen === "login" ? "signup" : "login", showGuestLink));
  if(showGuestLink) document.getElementById("guestLink").addEventListener("click", () => renderGuestExplore());
@@ -325,7 +325,7 @@
  <button class="tab-btn" data-tab="profile">Profile</button>
  </div>
  <div class="content-area" id="contentArea"></div>
- <div class="app-footer">Built by OKWOR KINGDAVID</div>
+ <div class="app-footer">Built by Okwor Kingdavid</div>
  `;
  document.querySelectorAll(".tab-btn").forEach(btn => btn.addEventListener("click", (e) => {
  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
