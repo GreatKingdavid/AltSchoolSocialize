@@ -5,6 +5,7 @@ const viewRoutes = require('./routes/viewRoutes');
 
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded({extended:false}));
 
 connectDB();
 
@@ -19,6 +20,8 @@ app.use('/api/v1/posts', require('./routes/postRoutes'));
 
 // The UI View Route
 app.use('/home', viewRoutes);
+app.get('/', (req,res) => 
+    res.redirect('/home'))
 
 // --- GLOBAL ERROR HANDLER ---
 app.use((err, req, res, next) => {
