@@ -1,9 +1,8 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
  <meta charset="UTF-8" />
- <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+ <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover" />
  <title>TIMДА</title>
  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
  <style>
@@ -11,33 +10,49 @@
  margin: 0;
  padding: 0;
  box-sizing: border-box;
- transition: background 0.3s, color 0.3s, transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+ transition: background 0.3s cubic-bezier(0.25, 0.1, 0.25, 1), color 0.2s ease, transform 0.25s cubic-bezier(0.25, 0.1, 0.25, 1), opacity 0.2s ease;
  }
 
  :root {
- --bg: #f5f5f7;
- --bg-card: rgba(255, 255, 255, 0.85);
- --text: #1d1d1f;
- --text-secondary: #86868b;
- --accent: #0071e3;
- --border: rgba(210, 210, 215, 0.7);
- --shadow: 0 12px 40px rgba(0, 0, 0, 0.04);
- --glass: saturate(180%) blur(20px);
- --brown: #6d4c41;
+ --primary: #5D3A2C;
+ --primary-soft: #7B4F3A;
+ --primary-light: rgba(93, 58, 44, 0.08);
+ --secondary: #2D5F7E;
+ --secondary-soft: #3A759C;
+ --secondary-light: rgba(45, 95, 126, 0.12);
+ --tertiary: #1C1C1E;
+ --bg: #FBFBFD;
+ --bg-card: rgba(255, 255, 255, 0.82);
+ --text: #1C1C1E;
+ --text-secondary: #6C6C74;
+ --accent: var(--primary);
+ --border: rgba(60, 60, 67, 0.12);
+ --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.02);
+ --shadow-md: 0 8px 36px rgba(0, 0, 0, 0.06);
+ --glass: saturate(180%) blur(24px);
+ --radius-sm: 12px;
+ --radius-md: 22px;
+ --radius-lg: 34px;
+ --font-stack: -apple-system, 'Helvetica Neue', 'SF Pro Display', 'SF Pro Text', BlinkMacSystemFont, sans-serif;
  }
 
  .dark {
- --bg: #000000;
- --bg-card: rgba(28, 28, 30, 0.8);
- --text: #f5f5f7;
- --text-secondary: #a1a1a6;
- --accent: #0a84ff;
- --border: rgba(56, 56, 58, 0.8);
- --shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+ --bg: #0C0C0C;
+ --bg-card: rgba(28, 28, 30, 0.84);
+ --text: #F5F5F7;
+ --text-secondary: #98989E;
+ --border: rgba(84, 84, 88, 0.45);
+ --primary: #8B6B5A;
+ --primary-soft: #A78572;
+ --secondary: #5C9BC2;
+ --secondary-soft: #7BB3D4;
+ --tertiary: #F5F5F7;
+ --primary-light: rgba(139, 107, 90, 0.18);
+ --secondary-light: rgba(92, 155, 194, 0.18);
  }
 
  body {
- font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+ font-family: var(--font-stack);
  background: var(--bg);
  color: var(--text);
  display: flex;
@@ -45,176 +60,405 @@
  align-items: center;
  height: 100vh;
  overflow: hidden;
+ margin: 0;
  -webkit-font-smoothing: antialiased;
+ -moz-osx-font-smoothing: grayscale;
  }
 
  .app {
  width: 100%;
- max-width: 440px;
- height: calc(100vh - 20px);
+ max-width: 430px;
+ height: min(92vh, 820px);
  background: var(--bg-card);
  backdrop-filter: var(--glass);
  -webkit-backdrop-filter: var(--glass);
- border-radius: 40px;
- box-shadow: var(--shadow);
+ border-radius: var(--radius-lg);
+ box-shadow: var(--shadow-md);
  overflow: hidden;
  display: flex;
  flex-direction: column;
  border: 1px solid var(--border);
+ position: relative;
  }
 
- /* Header Styling */
  .app-header {
  display: flex;
  justify-content: space-between;
  align-items: center;
- padding: 1.2rem 1.8rem;
+ padding: 14px 20px 10px 20px;
  z-index: 10;
  }
 
  .logo {
- font-size: 1.7rem;
- font-weight: 700;
- letter-spacing: -0.04em;
+ font-size: 1.8rem;
+ font-weight: 670;
+ letter-spacing: -0.03em;
+ color: var(--primary);
+ text-shadow: 0 1px 2px rgba(0,0,0,0.03);
  }
 
- /* Navigation */
+ .header-actions {
+ display: flex;
+ align-items: center;
+ gap: 8px;
+ }
+
+ .theme-btn, .logout-btn {
+ background: rgba(128,128,128,0.06);
+ border: none;
+ color: var(--text-secondary);
+ width: 36px;
+ height: 36px;
+ border-radius: 50%;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ cursor: pointer;
+ font-size: 1.1rem;
+ transition: all 0.2s;
+ backdrop-filter: blur(8px);
+ }
+ .theme-btn:hover, .logout-btn:hover {
+ background: var(--primary-light);
+ color: var(--primary);
+ transform: translateY(-1px);
+ }
+
  .tab-nav {
  display: flex;
- padding: 0.5rem 1.5rem;
- gap: 10px;
- border-bottom: 1px solid var(--border);
+ padding: 12px 16px 24px 16px;
+ gap: 6px;
+ border-top: 1px solid var(--border);
+ background: var(--bg-card);
+ justify-content: space-around;
+ order: 3; 
  }
 
  .tab-btn {
- background: none;
+ background: transparent;
  border: none;
  color: var(--text-secondary);
- font-weight: 600;
- font-size: 0.95rem;
+ font-weight: 590;
+ font-size: 0.85rem;
  cursor: pointer;
- padding: 10px 14px;
+ padding: 8px 12px;
  border-radius: 12px;
+ transition: all 0.2s;
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ gap: 4px;
  }
+
+ .tab-btn i { font-size: 1.2rem; }
 
  .tab-btn.active {
- color: var(--accent);
- background: rgba(0, 113, 227, 0.1);
+ color: var(--primary);
+ transform: scale(1.05);
  }
 
- /* Content Area */
  .content-area {
  flex: 1;
  overflow-y: auto;
- padding: 1.5rem;
+ padding: 16px 18px;
+ scrollbar-width: thin;
+ scrollbar-color: var(--border) transparent;
+ order: 2;
+ }
+ .content-area::-webkit-scrollbar {
+ width: 4px;
+ }
+ .content-area::-webkit-scrollbar-thumb {
+ background: var(--border);
+ border-radius: 12px;
  }
 
- /* Card Pro Design */
  .card {
  background: var(--bg-card);
  border: 1px solid var(--border);
- border-radius: 22px;
- padding: 1.2rem;
- margin-bottom: 1.2rem;
+ border-radius: var(--radius-md);
+ padding: 16px;
+ margin-bottom: 16px;
+ box-shadow: var(--shadow-sm);
+ transition: transform 0.3s ease, box-shadow 0.3s ease;
+ }
+ 
+ .card:hover {
+ transform: translateY(-2px);
+ box-shadow: var(--shadow-md);
  }
 
  .avatar {
- width: 40px; height: 40px;
- background: var(--brown);
+ width: 42px;
+ height: 42px;
  border-radius: 50%;
- display: flex; align-items: center; justify-content: center;
- font-weight: bold; color: white;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ font-weight: 650;
+ color: white;
+ font-size: 1.1rem;
+ text-transform: uppercase;
+ box-shadow: 0 2px 8px rgba(0,0,0,0.06);
  }
 
- .post-title { font-weight: 700; font-size: 1.1rem; margin-bottom: 0.4rem; }
- .post-text { font-size: 0.95rem; line-height: 1.5; color: var(--text); opacity: 0.9; margin-bottom: 1rem; }
+ .post-title {
+ font-weight: 650;
+ font-size: 1.15rem;
+ margin-bottom: 6px;
+ color: var(--text);
+ letter-spacing: -0.02em;
+ }
 
- /* Buttons & Inputs */
+ .post-text {
+ font-size: 0.95rem;
+ line-height: 1.5;
+ color: var(--text);
+ opacity: 0.9;
+ margin-bottom: 12px;
+ }
+
  .btn {
- background: var(--text);
- color: var(--bg);
+ background: var(--primary);
+ color: white;
  border: none;
- padding: 12px;
- border-radius: 14px;
+ padding: 13px 18px;
+ border-radius: 30px;
  font-weight: 600;
  cursor: pointer;
  width: 100%;
+ font-size: 0.95rem;
+ letter-spacing: -0.01em;
+ transition: all 0.2s;
+ background: var(--primary-soft);
+ box-shadow: 0 2px 8px rgba(93,58,44,0.15);
+ }
+ .btn:active {
+ transform: scale(0.96);
  }
 
  .btn.outline {
  background: transparent;
  border: 1.5px solid var(--border);
  color: var(--text);
+ box-shadow: none;
+ font-weight: 500;
+ }
+
+ .search-container {
+ display: flex;
+ background: rgba(128,128,128,0.08);
+ border-radius: 24px;
+ padding: 4px 8px 4px 16px;
+ align-items: center;
+ margin-bottom: 1.2rem;
+ border: 1px solid transparent;
+ transition: border 0.3s, background 0.3s;
+ }
+ .search-container:focus-within {
+ background: var(--bg-card);
+ border-color: var(--primary);
+ }
+ .search-input {
+ border: none !important;
+ background: transparent !important;
+ padding: 10px 0 !important;
+ box-shadow: none !important;
+ flex: 1;
+ color: var(--text);
+ outline: none;
+ }
+ .search-icon {
+ color: var(--text-secondary);
+ margin-right: 10px;
+ }
+ .search-go-btn {
+ background: var(--primary);
+ color: white;
+ border: none;
+ width: 32px;
+ height: 32px;
+ border-radius: 50%;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ cursor: pointer;
+ }
+
+ /* 1. STYLED FILTERS */
+ .filter-pill-container {
+ display: flex;
+ background: rgba(128,128,128,0.08);
+ padding: 4px;
+ border-radius: 50px;
+ margin-bottom: 1.5rem;
+ width: fit-content;
+ margin-left: auto;
+ }
+ .filter-pill {
+ padding: 6px 16px;
+ border-radius: 50px;
+ font-size: 0.8rem;
+ font-weight: 600;
+ cursor: pointer;
+ border: none;
+ background: transparent;
+ color: var(--text-secondary);
+ transition: 0.3s;
+ }
+ .filter-pill.active {
+ background: var(--bg-card);
+ color: var(--primary);
+ box-shadow: var(--shadow-sm);
  }
 
  .form-field input, .form-field textarea {
  width: 100%;
- padding: 12px 16px;
- border-radius: 12px;
- border: 1px solid var(--border);
- background: rgba(128,128,128,0.05);
+ padding: 14px 16px;
+ border-radius: 16px;
+ border: 1.5px solid var(--border);
+ background: rgba(128,128,128,0.03);
  color: var(--text);
  outline: none;
+ font-family: var(--font-stack);
+ font-size: 0.95rem;
+ transition: 0.2s;
+ }
+ .form-field input:focus, .form-field textarea:focus {
+ border-color: var(--primary);
+ background: var(--bg-card);
  }
 
- /* Tags & Action Row */
- .tag { background: var(--accent); color: white; padding: 3px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: 500; }
- .actions { display: flex; align-items: center; gap: 15px; margin-top: 10px; color: var(--text-secondary); }
- .actions i { cursor: pointer; font-size: 1.1rem; }
- .actions i.liked { color: var(--danger); }
+ .tag {
+ background: var(--secondary-light);
+ color: var(--secondary);
+ padding: 4px 12px;
+ border-radius: 20px;
+ font-size: 0.7rem;
+ font-weight: 600;
+ letter-spacing: 0.02em;
+ }
 
- .follow-btn { padding: 6px 14px; border-radius: 20px; font-weight: 600; font-size: 0.8rem; cursor: pointer; border: 1px solid var(--accent); color: var(--accent); background: transparent; }
- .follow-btn.following { background: var(--accent); color: white; }
-
- /* Footer */
- .app-footer {
- padding: 1rem;
- text-align: center;
- font-size: 0.75rem;
+ .actions {
+ display: flex;
+ align-items: center;
+ gap: 18px;
+ margin-top: 14px;
  color: var(--text-secondary);
- border-top: 1px solid var(--border);
- font-weight: 500;
+ }
+ .actions i {
+ cursor: pointer;
+ font-size: 1.2rem;
+ transition: 0.15s;
+ }
+ 
+ .actions i.liked {
+ color: #D94B4B;
+ animation: heartPop 0.3s cubic-bezier(0.17, 0.89, 0.32, 1.49);
+ }
+ @keyframes heartPop {
+ 0% { transform: scale(1); }
+ 50% { transform: scale(1.4); }
+ 100% { transform: scale(1); }
  }
 
- /* Modal Styling */
- .modal {
- display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4);
- backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
- z-index: 1000; justify-content: center; align-items: center;
+ .follow-btn {
+ padding: 6px 16px;
+ border-radius: 24px;
+ font-weight: 600;
+ font-size: 0.8rem;
+ cursor: pointer;
+ border: 1.2px solid var(--primary);
+ color: var(--primary);
+ background: transparent;
+ transition: 0.2s;
  }
- .modal.active { display: flex; }
- .modal-content { background: var(--bg-card); padding: 2rem; border-radius: 30px; width: 90%; max-width: 380px; border: 1px solid var(--border); }
+ .follow-btn.following {
+ background: var(--primary);
+ color: white;
+ }
+
+ .app-footer {
+ padding: 8px 16px;
+ text-align: center;
+ font-size: 0.65rem;
+ color: var(--text-secondary);
+ font-weight: 500;
+ order: 4;
+ }
+
+ .modal {
+ display: none;
+ position: fixed;
+ inset: 0;
+ background: rgba(0,0,0,0.35);
+ backdrop-filter: blur(14px);
+ -webkit-backdrop-filter: blur(14px);
+ z-index: 1000;
+ justify-content: center;
+ align-items: center;
+ }
+ .modal.active {
+ display: flex;
+ }
+ .modal-content {
+ background: var(--bg-card);
+ padding: 24px;
+ border-radius: 32px;
+ width: 90%;
+ max-width: 360px;
+ border: 1px solid var(--border);
+ box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+ }
+
+ .profile-avatar-large {
+ width: 72px;
+ height: 72px;
+ border-radius: 50%;
+ margin: 0 auto 14px;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ font-size: 2rem;
+ font-weight: 650;
+ color: white;
+ }
+
+ hr {
+ border: 0.5px solid var(--border);
+ margin: 12px 0;
+ }
  </style>
 </head>
-
 <body>
  <div class="app" id="appRoot"></div>
 
- <!-- EDIT MODAL - FULLY RESTORED -->
+ <!-- EDIT MODAL -->
  <div class="modal" id="editModal">
  <div class="modal-content">
- <h3 style="margin-bottom:1rem">Edit Post</h3>
+ <h3 style="margin-bottom:1.2rem; font-weight:600; color:var(--primary);">Edit Post</h3>
  <input type="hidden" id="editId" />
  <div class="form-field" style="margin-bottom:0.8rem"><input id="editTitle" placeholder="Title" /></div>
  <div class="form-field" style="margin-bottom:0.8rem"><textarea id="editContent" rows="4" placeholder="Content"></textarea></div>
  <div class="form-field" style="margin-bottom:1rem"><input id="editTags" placeholder="Tags (comma separated)" /></div>
- <button class="btn" id="saveEditBtn" style="margin-bottom:0.5rem">Save</button>
+ <button class="btn" id="saveEditBtn" style="margin-bottom:0.6rem">Save</button>
  <button class="btn outline" id="cancelEditBtn">Cancel</button>
- <p id="editMsg" style="font-size:0.8rem; margin-top:10px;"></p>
+ <p id="editMsg" style="font-size:0.8rem; margin-top:10px; color:var(--text-secondary);"></p>
  </div>
  </div>
 
- <!-- GUEST TOAST - FULLY RESTORED -->
+ <!-- GUEST TOAST -->
  <div class="modal" id="guestLikeToast">
  <div class="modal-content" style="text-align:center">
- <p style="margin-bottom:1.5rem; font-weight:500"> Please log in to like posts.</p>
- <button class="btn" id="toastLoginBtn" style="margin-bottom:0.5rem">Log In</button>
+ <p style="margin-bottom:1.5rem; font-weight:510; font-size:1rem;"> Please log in to like posts.</p>
+ <button class="btn" id="toastLoginBtn" style="margin-bottom:0.6rem">Log In</button>
  <button class="btn outline" id="toastCancelBtn">Cancel</button>
  </div>
  </div>
 
  <script>
- const API = ""; 
+ (function() {
+ const API = "";
  let state = {
  token: localStorage.getItem("token"),
  user: JSON.parse(localStorage.getItem("user") || "null"),
@@ -224,6 +468,16 @@
  };
 
  if (state.dark) document.documentElement.classList.add("dark");
+
+ function generateUserColor(username) {
+ let hash = 0;
+ const str = username || "user";
+ for (let i = 0; i < str.length; i++) {
+ hash = str.charCodeAt(i) + ((hash << 5) - hash);
+ }
+ const hue = ((hash % 360) + 360) % 360;
+ return `hsl(${hue}, 52%, 48%)`;
+ }
 
  function apiCall(url, options = {}) {
  const headers = { "Content-Type": "application/json", ...options.headers };
@@ -245,8 +499,18 @@
  function showGuestLikePrompt() { document.getElementById("guestLikeToast").classList.add("active"); }
  function hideGuestLikePrompt() { document.getElementById("guestLikeToast").classList.remove("active"); }
 
+ function performLogout() {
+ state.token = null;
+ state.user = null;
+ state.followingIds.clear();
+ localStorage.removeItem("token");
+ localStorage.removeItem("user");
+ renderGuestExplore();
+ }
+
  document.getElementById("toastLoginBtn").addEventListener("click", () => {
- hideGuestLikePrompt(); renderAuth("login", true);
+ hideGuestLikePrompt();
+ renderAuth("login", true);
  });
  document.getElementById("toastCancelBtn").addEventListener("click", hideGuestLikePrompt);
 
@@ -255,23 +519,40 @@
  root.innerHTML = `
  <div class="app-header">
  <span class="logo">TIMДА</span>
- <button class="follow-btn" id="loginLinkBtn">Login</button>
+ <div class="header-actions">
+ <button class="theme-btn" id="guestThemeToggle">${state.dark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>'}</button>
+ <button class="follow-btn" id="loginLinkBtn" style="padding:6px 16px;">Login</button>
  </div>
- <div class="tab-nav"><button class="tab-btn active">Explore</button></div>
+ </div>
  <div class="content-area" id="contentArea"></div>
- <div class="app-footer">Built by  Okwor Kingdavid</div>
+ <div class="tab-nav">
+ <button class="tab-btn active"><i class="fas fa-compass"></i><span>Explore</span></button>
+ </div>
+ <div class="app-footer"></div>
  `;
  document.getElementById("loginLinkBtn").addEventListener("click", () => renderAuth("login", true));
+ document.getElementById("guestThemeToggle").addEventListener("click", () => {
+ state.dark = !state.dark;
+ document.documentElement.classList.toggle("dark", state.dark);
+ localStorage.setItem("dark", state.dark.toString());
+ renderGuestExplore();
+ });
  loadExplore();
  }
 
  function renderAuth(screen = "login", showGuestLink = false) {
  const root = document.getElementById("appRoot");
  root.innerHTML = `
- <div class="app-header"><span class="logo">TIMДА</span></div>
- <div class="content-area" style="display:flex; flex-direction:column; justify-content:center;">
- <h1 style="font-size:2rem; margin-bottom:1.5rem; text-align:center;">${screen === "login" ? "Log In" : "Sign Up"}</h1>
- <form id="authForm" style="display:flex; flex-direction:column; gap:12px;">
+ <div class="app-header" style="order:1"><span class="logo">TIMДА</span></div>
+ <div class="content-area" style="display:flex; flex-direction:column; justify-content:center; order:2; padding: 30px;">
+ <div style="text-align:center; margin-bottom:2rem;">
+ <div style="background: var(--primary-light); width: 64px; height: 64px; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; color: var(--primary); font-size: 1.5rem;">
+ <i class="fas ${screen === 'login' ? 'fa-lock' : 'fa-user-plus'}"></i>
+ </div>
+ <h1 style="font-size:1.75rem; font-weight:700; color: var(--text);">${screen === "login" ? "Welcome back" : "Create account"}</h1>
+ <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 4px;">${screen === "login" ? "Enter your details to continue" : "Join the community today"}</p>
+ </div>
+ <form id="authForm" style="display:flex; flex-direction:column; gap:16px;">
  ${screen === "signup" ? `
  <div class="form-field"><input id="firstName" placeholder="First Name" required></div>
  <div class="form-field"><input id="lastName" placeholder="Last Name" required></div>
@@ -279,15 +560,15 @@
  ` : ""}
  <div class="form-field"><input id="emailOrUser" placeholder="Email or Username" required></div>
  <div class="form-field"><input id="password" type="password" placeholder="Password" required></div>
- <button type="submit" class="btn">${screen === "signup" ? "Create Account" : "Sign In"}</button>
+ <button type="submit" class="btn" style="padding: 16px; font-size: 1rem; margin-top: 8px;">${screen === "signup" ? "Create Account" : "Sign In"}</button>
  </form>
- <p id="toggleAuth" style="text-align:center; margin-top:1.5rem; cursor:pointer; color:var(--accent); font-weight:600;">
- ${screen === "login" ? "Don't have an account? Sign up" : "Already have an account? Log in"}
+ <p id="toggleAuth" style="text-align:center; margin-top:1.8rem; cursor:pointer; color:var(--text-secondary); font-size: 0.9rem;">
+ ${screen === "login" ? "Don't have an account? <span style='color:var(--primary); font-weight:700;'>Sign up</span>" : "Already have an account? <span style='color:var(--primary); font-weight:700;'>Log in</span>"}
  </p>
- ${showGuestLink ? `<p id="guestLink" style="text-align:center; margin-top:1rem; cursor:pointer; opacity:0.6;">Continue as Guest</p>` : ""}
- <p id="authMsg" style="text-align:center; margin-top:1rem; color:red;"></p>
+ ${showGuestLink ? `<p id="guestLink" style="text-align:center; margin-top:1.2rem; cursor:pointer; opacity:0.7; color:var(--text-secondary); font-size: 0.85rem;">Continue as Guest</p>` : ""}
+ <p id="authMsg" style="text-align:center; margin-top:1rem; color:#C15C5C; font-size: 0.85rem; font-weight: 500;"></p>
  </div>
- <div class="app-footer">Built by  Okwor Kingdavid</div>
+ <div class="app-footer"></div>
  `;
  document.getElementById("toggleAuth").addEventListener("click", () => renderAuth(screen === "login" ? "signup" : "login", showGuestLink));
  if(showGuestLink) document.getElementById("guestLink").addEventListener("click", () => renderGuestExplore());
@@ -299,13 +580,19 @@
  if (screen === "signup") {
  const body = { first_name: document.getElementById("firstName").value, last_name: document.getElementById("lastName").value, username: document.getElementById("username").value, email: document.getElementById("emailOrUser").value, password };
  const { ok, data } = await apiCall("/auth/signup", { method: "POST", body: JSON.stringify(body) });
- if (ok) renderAuth("login", false); else msg.textContent = data.message;
+ if (ok) renderAuth("login", false); else msg.textContent = data.message || "Signup failed";
  } else {
  const iden = document.getElementById("emailOrUser").value;
  const body = { [iden.includes("@") ? "email" : "username"]: iden, password };
  const { ok, data } = await apiCall("/auth/signin", { method: "POST", body: JSON.stringify(body) });
- if (ok) { state.token = data.token; state.user = data.user; localStorage.setItem("token", data.token); localStorage.setItem("user", JSON.stringify(data.user)); await loadFollowingIds(); renderMainApp(); }
- else msg.textContent = data.message;
+ if (ok) {
+ state.token = data.token;
+ state.user = data.user;
+ localStorage.setItem("token", data.token);
+ localStorage.setItem("user", JSON.stringify(data.user));
+ await loadFollowingIds();
+ renderMainApp();
+ } else msg.textContent = data.message || "Invalid credentials";
  }
  });
  }
@@ -316,17 +603,31 @@
  root.innerHTML = `
  <div class="app-header">
  <span class="logo">TIMДА</span>
- <button class="theme-toggle" onclick="toggleTheme()">${state.dark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>'}</button>
+ <div class="header-actions">
+ <button class="theme-btn" id="mainThemeToggle">${state.dark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>'}</button>
+ <button class="logout-btn" id="logoutButton" title="Log out"><i class="fas fa-arrow-right-from-bracket"></i></button>
  </div>
- <div class="tab-nav">
- <button class="tab-btn active" data-tab="feed">Feed</button>
- <button class="tab-btn" data-tab="explore">Explore</button>
- <button class="tab-btn" data-tab="create">Post</button>
- <button class="tab-btn" data-tab="profile">Profile</button>
  </div>
  <div class="content-area" id="contentArea"></div>
- <div class="app-footer">Built by Okwor Kingdavid</div>
+ <div class="tab-nav">
+ <button class="tab-btn active" data-tab="feed"><i class="fas fa-house"></i><span>Feed</span></button>
+ <button class="tab-btn" data-tab="explore"><i class="fas fa-magnifying-glass"></i><span>Explore</span></button>
+ <button class="tab-btn" data-tab="create"><i class="fas fa-plus-square"></i><span>Post</span></button>
+ <button class="tab-btn" data-tab="profile"><i class="fas fa-user"></i><span>Profile</span></button>
+ </div>
+ <div class="app-footer"></div>
  `;
+
+ document.getElementById("mainThemeToggle").addEventListener("click", () => {
+ state.dark = !state.dark;
+ document.documentElement.classList.toggle("dark", state.dark);
+ localStorage.setItem("dark", state.dark.toString());
+ renderMainApp();
+ });
+ document.getElementById("logoutButton").addEventListener("click", () => {
+ performLogout();
+ });
+
  document.querySelectorAll(".tab-btn").forEach(btn => btn.addEventListener("click", (e) => {
  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
  btn.classList.add("active");
@@ -336,53 +637,83 @@
  }
 
  async function loadContent(page) {
+ state.currentPage = page;
  if (page === "feed") await loadFeed();
  else if (page === "explore") await loadExplore();
  else if (page === "create") renderCreatePost();
  else if (page === "profile") await loadProfile();
  }
 
- async function loadFeed(pageNum = 1) {
- const { data } = await apiCall(`/feed?page=${pageNum}&limit=10`);
+ async function loadFeed() {
+ const { data } = await apiCall(`/feed?page=1&limit=10`);
  let html = "";
  if (data?.posts?.length) data.posts.forEach(p => html += renderPostCard(p, false));
- else html = "<p style='text-align:center; opacity:0.6'>No posts yet. Follow people to see updates.</p>";
+ else html = "<p style='text-align:center; color:var(--text-secondary); padding:2rem;'>Follow people to see posts.</p>";
  document.getElementById("contentArea").innerHTML = html;
  attachPostEvents();
  }
 
- async function loadExplore(pageNum = 1) {
+ async function loadExplore() {
  const searchTitle = document.getElementById("searchTitle")?.value || "";
- const sort = document.getElementById("sortSelect")?.value || "timestamp";
- let url = `/posts?page=${pageNum}&limit=10&sort=${sort}`;
+ const currentSort = state.exploreSort || "timestamp";
+ let url = `/posts?page=1&limit=10&sort=${currentSort}`;
  if (searchTitle) url += `&title=${encodeURIComponent(searchTitle)}`;
  
  const { data } = await (state.token ? apiCall(url) : fetch(API+url).then(r => r.json().then(d => ({data: d}))));
- let html = `
- <div style="display:flex; gap:10px; margin-bottom:1.5rem;">
- <input id="searchTitle" class="form-field" style="flex:2" placeholder="Search posts..." value="${searchTitle}">
- <select id="sortSelect" class="form-field" style="flex:1"><option value="timestamp">New</option><option value="like_count">Top</option></select>
- <button class="follow-btn" id="searchBtn">Go</button>
+ document.getElementById("contentArea").innerHTML = `
+ <div class="search-container">
+ <i class="fas fa-search search-icon"></i>
+ <input id="searchTitle" class="search-input" placeholder="Search for ideas..." value="${searchTitle}">
+ <button class="search-go-btn" id="searchBtn"><i class="fas fa-arrow-right"></i></button>
+ </div>
+ <div class="filter-pill-container">
+ <button class="filter-pill ${currentSort === 'timestamp' ? 'active' : ''}" data-sort="timestamp">Latest</button>
+ <button class="filter-pill ${currentSort === 'like_count' ? 'active' : ''}" data-sort="like_count">Trending</button>
  </div>
  <div id="exploreList"></div>
  `;
- document.getElementById("contentArea").innerHTML = html;
  const list = document.getElementById("exploreList");
  if (data?.posts?.length) data.posts.forEach(p => list.innerHTML += renderPostCard(p, false));
- document.getElementById("searchBtn").onclick = () => loadExplore(1);
+ else list.innerHTML = "<p style='color:var(--text-secondary); text-align:center; padding: 2rem;'>No posts found.</p>";
+ 
+ document.getElementById("searchBtn").onclick = () => loadExplore();
+ document.querySelectorAll(".filter-pill").forEach(pill => {
+ pill.onclick = () => {
+ state.exploreSort = pill.dataset.sort;
+ loadExplore();
+ };
+ });
  attachPostEvents();
  }
 
  function renderCreatePost() {
  document.getElementById("contentArea").innerHTML = `
- <h2 style="margin-bottom:1.2rem">New Post</h2>
- <div class="form-field" style="margin-bottom:1rem"><input id="newTitle" placeholder="Title"></div>
- <div class="form-field" style="margin-bottom:1rem"><textarea id="newContent" rows="6" placeholder="Write something..."></textarea></div>
- <div class="form-field" style="margin-bottom:1.5rem"><input id="newTags" placeholder="Tags (comma separated)"></div>
- <button class="btn" id="submitPost">Publish Post</button>
+ <div style="padding: 4px;">
+ <div style="margin-bottom: 2rem;">
+ <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--text);">Create Post</h2>
+ <p style="color: var(--text-secondary); font-size: 0.9rem;">Share your thoughts with the community</p>
+ </div>
+ <div class="card" style="padding: 24px; border-radius: 24px;">
+ <div class="form-field" style="margin-bottom:1.2rem">
+ <label style="display:block; font-size: 0.8rem; font-weight: 700; margin-bottom: 8px; color: var(--primary);">TITLE</label>
+ <input id="newTitle" placeholder="Give it a catchy name...">
+ </div>
+ <div class="form-field" style="margin-bottom:1.2rem">
+ <label style="display:block; font-size: 0.8rem; font-weight: 700; margin-bottom: 8px; color: var(--primary);">CONTENT</label>
+ <textarea id="newContent" rows="6" placeholder="What's on your mind?"></textarea>
+ </div>
+ <div class="form-field" style="margin-bottom:2rem">
+ <label style="display:block; font-size: 0.8rem; font-weight: 700; margin-bottom: 8px; color: var(--primary);">TAGS</label>
+ <input id="newTags" placeholder="e.g. tech, life, food (comma separated)">
+ </div>
+ <button class="btn" id="submitPost" style="padding: 16px; border-radius: 18px;">
+ <i class="fas fa-paper-plane" style="margin-right: 8px;"></i> Publish Post
+ </button>
+ </div>
+ </div>
  `;
  document.getElementById("submitPost").onclick = async () => {
- const body = { title: document.getElementById("newTitle").value, content: document.getElementById("newContent").value, tags: document.getElementById("newTags").value.split(",") };
+ const body = { title: document.getElementById("newTitle").value, content: document.getElementById("newContent").value, tags: document.getElementById("newTags").value.split(",").map(t=>t.trim()).filter(Boolean) };
  await apiCall("/posts", { method: "POST", body: JSON.stringify(body) });
  loadContent("feed");
  };
@@ -391,97 +722,112 @@
  async function loadProfile() {
  const { data: myPosts } = await apiCall("/me/posts?limit=5");
  const { data: following } = await apiCall("/me/following");
+ const avatarColor = generateUserColor(state.user?.username || "user");
  document.getElementById("contentArea").innerHTML = `
  <div style="text-align:center; margin-bottom:2rem;">
- <div class="avatar" style="width:60px; height:60px; margin:0 auto 10px; font-size:1.5rem">${state.user.username[0].toUpperCase()}</div>
- <h2>${state.user.username}</h2>
+ <div class="profile-avatar-large" style="background:${avatarColor};">${(state.user?.username||"?")[0].toUpperCase()}</div>
+ <h2 style="font-weight:620;">${state.user?.username}</h2>
  </div>
- <div style="display:flex; gap:10px; margin-bottom:1.5rem">
+ <div style="display:flex; gap:10px; margin-bottom:1.8rem;">
  <button class="btn outline" id="showFollowingBtn">Following (${following?.following?.length || 0})</button>
  <button class="btn outline" id="showFollowersBtn">Followers</button>
  </div>
- <div id="profileExtra" style="display:none; margin-bottom:1.5rem"></div>
- <h3>My Recent Posts</h3>
- <div id="myPostsList">${myPosts.posts.map(p => renderPostCard(p, true)).join("")}</div>
+ <div id="profileExtra" style="display:none; margin-bottom:1.5rem;"></div>
+ <h3 style="margin-bottom:1rem;">My Recent Posts</h3>
+ <div id="myPostsList">${(myPosts?.posts||[]).map(p => renderPostCard(p, true)).join("") || "<p style='color:var(--text-secondary);'>No posts yet.</p>"}</div>
  `;
  document.getElementById("showFollowingBtn").onclick = () => {
  const div = document.getElementById("profileExtra");
  div.style.display = "block";
- div.innerHTML = following?.following?.map(u => `<div style="padding:10px; border-bottom:1px solid var(--border)">${u.username}</div>`).join("") || "No following";
+ div.innerHTML = following?.following?.map(u => `<div style="padding:12px; border-bottom:1px solid var(--border);">${u.username}</div>`).join("") || "Not following anyone.";
  };
  document.getElementById("showFollowersBtn").onclick = async () => {
  const { data } = await apiCall("/me/followers");
  const div = document.getElementById("profileExtra");
  div.style.display = "block";
- div.innerHTML = data.followers.map(u => `<div style="padding:10px; border-bottom:1px solid var(--border)">${u.username}</div>`).join("") || "No followers";
+ div.innerHTML = (data?.followers||[]).map(u => `<div style="padding:12px; border-bottom:1px solid var(--border);">${u.username}</div>`).join("") || "No followers.";
  };
  attachPostEvents();
  }
 
  function renderPostCard(post, isOwner = false) {
  const isFollowing = state.followingIds.has(post.author?._id);
+ const avatarColor = generateUserColor(post.author?.username || "anonymous");
  return `
  <div class="card" data-post-id="${post._id}">
- <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem">
- <div style="display:flex; align-items:center; gap:10px">
- <div class="avatar">${(post.author?.username || "?")[0].toUpperCase()}</div>
- <div><div style="font-weight:600">${post.author?.username}</div><div style="font-size:0.7rem; color:var(--text-secondary)">${new Date(post.createdAt).toLocaleDateString()}</div></div>
+ <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px">
+ <div style="display:flex; align-items:center; gap:12px">
+ <div class="avatar" style="background:${avatarColor};">${(post.author?.username || "?")[0].toUpperCase()}</div>
+ <div><div style="font-weight:620;">${post.author?.username}</div><div style="font-size:0.7rem; color:var(--text-secondary);">${new Date(post.createdAt).toLocaleDateString()}</div></div>
  </div>
  ${!isOwner && state.token ? `<button class="follow-btn ${isFollowing ? 'following' : ''}" data-author-id="${post.author?._id}" data-action="follow-toggle">${isFollowing ? 'Unfollow' : 'Follow'}</button>` : ""}
  </div>
  <div class="post-title">${post.title}</div>
  <div class="post-text">${post.content}</div>
- <div style="display:flex; gap:5px; margin-bottom:10px">${post.tags?.map(t => `<span class="tag">${t}</span>`).join("") || ""}</div>
+ <div style="display:flex; gap:6px; margin-bottom:12px; flex-wrap:wrap;">${post.tags?.map(t => `<span class="tag">${t}</span>`).join("") || ""}</div>
  <div class="actions">
  <i class="${post.likedByMe ? 'fas fa-heart liked' : 'far fa-heart'}" data-action="like"></i>
- <span style="font-weight:600; font-size:0.9rem">${post.like_count}</span>
+ <span style="font-weight:600; font-size:0.9rem;">${post.like_count || 0}</span>
  </div>
- ${isOwner ? `<div style="margin-top:15px; display:flex; gap:10px"><button class="follow-btn" data-action="edit" style="color:var(--text); border-color:var(--border)">Edit</button><button class="follow-btn" data-action="delete" style="color:red; border-color:red">Delete</button></div>` : ""}
+ ${isOwner ? `<div style="margin-top:16px; display:flex; gap:10px;"><button class="follow-btn" data-action="edit" style="color:var(--secondary); border-color:var(--secondary);">Edit</button><button class="follow-btn" data-action="delete" style="color:#C15C5C; border-color:#C15C5C;">Delete</button></div>` : ""}
  </div>`;
  }
 
  function attachPostEvents() {
- document.querySelectorAll('[data-action="like"]').forEach(btn => btn.onclick = async (e) => {
+ document.querySelectorAll('[data-action="like"]').forEach(btn => {
+ btn.onclick = async (e) => {
  if (!state.token) return showGuestLikePrompt();
  const id = e.target.closest(".card").dataset.postId;
  const method = e.target.classList.contains("liked") ? "DELETE" : "POST";
- await apiCall(`/posts/${id}/like`, { method }); loadContent(state.currentPage);
+ await apiCall(`/posts/${id}/like`, { method });
+ loadContent(state.currentPage);
+ };
  });
- document.querySelectorAll('[data-action="follow-toggle"]').forEach(btn => btn.onclick = async (e) => {
+ document.querySelectorAll('[data-action="follow-toggle"]').forEach(btn => {
+ btn.onclick = async (e) => {
  const id = e.target.dataset.authorId;
  const method = state.followingIds.has(id) ? "DELETE" : "POST";
- await apiCall(`/me/follow/${id}`, { method }); await loadFollowingIds(); loadContent(state.currentPage);
+ await apiCall(`/me/follow/${id}`, { method });
+ await loadFollowingIds();
+ loadContent(state.currentPage);
+ };
  });
- document.querySelectorAll('[data-action="edit"]').forEach(btn => btn.onclick = (e) => {
+ document.querySelectorAll('[data-action="edit"]').forEach(btn => {
+ btn.onclick = (e) => {
  const card = e.target.closest(".card");
  document.getElementById("editId").value = card.dataset.postId;
  document.getElementById("editTitle").value = card.querySelector(".post-title").textContent;
  document.getElementById("editContent").value = card.querySelector(".post-text").textContent;
  document.getElementById("editModal").classList.add("active");
+ };
  });
- document.querySelectorAll('[data-action="delete"]').forEach(btn => btn.onclick = async (e) => {
- if (confirm("Delete?")) { await apiCall(`/posts/${e.target.closest(".card").dataset.postId}`, { method: "DELETE" }); loadContent(state.currentPage); }
+ document.querySelectorAll('[data-action="delete"]').forEach(btn => {
+ btn.onclick = async (e) => {
+ if (confirm("Delete this post?")) {
+ await apiCall(`/posts/${e.target.closest(".card").dataset.postId}`, { method: "DELETE" });
+ loadContent(state.currentPage);
+ }
+ };
  });
  }
 
- document.getElementById("saveEditBtn").onclick = async () => {
+ document.getElementById("saveEditBtn").addEventListener("click", async () => {
  const id = document.getElementById("editId").value;
  const body = { title: document.getElementById("editTitle").value, content: document.getElementById("editContent").value };
  await apiCall(`/posts/${id}`, { method: "PATCH", body: JSON.stringify(body) });
  document.getElementById("editModal").classList.remove("active");
  loadContent(state.currentPage);
- };
- document.getElementById("cancelEditBtn").onclick = () => document.getElementById("editModal").classList.remove("active");
+ });
+ document.getElementById("cancelEditBtn").addEventListener("click", () => {
+ document.getElementById("editModal").classList.remove("active");
+ });
 
- window.toggleTheme = function () {
- state.dark = !state.dark;
- document.documentElement.classList.toggle("dark", state.dark);
- localStorage.setItem("dark", state.dark.toString());
+ if (state.token && state.user) {
  renderMainApp();
- };
-
- if (state.token) renderMainApp(); else renderGuestExplore();
+ } else {
+ renderGuestExplore();
+ }
+ })();
  </script>
 </body>
-
 </html>
