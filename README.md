@@ -101,7 +101,7 @@ npm test
 ---
 
 ## 🔗 Project Links
-- **Live API:** [View Hosted Demo]()
+- **Live API:** [View Hosted Demo](https://altschoolsocialize.onrender.com)
 - **Developer:** OKWOR KINGDAVID
 - **Brand:** TIMДА
 
