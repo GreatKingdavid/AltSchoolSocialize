@@ -1,138 +1,109 @@
-# Kumora Social API
+# TIMДА | Social Media REST API
 
-A production-quality REST API for a social media platform built with Node.js, Express, MongoDB, and Mongoose.  
-It supports user authentication, posts (drafts and published), follows, likes, and a personalized feed.  
-The API is fully tested with Jest and Supertest.
-Built by **Kuku Mubaraq Afolabbi**.
+![Node.js](https://shields.io)
+![Express.js](https://shields.io)
+![MongoDB](https://shields.io)
+![Jest](https://shields.io)
 
+A production-quality RESTful API built by **OKWOR KINGDAVID** under the **TIMДА** brand. This platform serves as a robust backbone for social media applications, supporting complex relationships, real-time feed generation, and rigorous security standards.
 
-## Features
+## 🚀 Key Features
 
-- **User Authentication** – Sign up & sign in with JWT (1-hour expiry), bcrypt password hashing.
-- **Posts** – Create, read, update, delete, publish. Drafts are private; only published posts appear publicly.
-- **Ownership & Authorization** – Only the post owner can edit, delete, or publish.
-- **Public Listing** – Paginated, searchable by author/title/tags, sortable by like_count, comment_count, timestamp.
-- **My Posts** – Authenticated user can see their own posts filtered by state (draft/published).
-- **Follow System** – Follow/unfollow users (no self-follow, no duplicates). List followers/following.
-- **Like System** – Like/unlike posts (no duplicates). Like count updates automatically.
-- **Personalized Feed** – Shows published posts from the current user and followed users.
-- **Fully Tested** – Automated tests for all endpoints and edge cases.
+- **Advanced Auth:** Secure Sign-up/Sign-in with JWT (1hr expiry) and Bcrypt hashing.
+- **Content Lifecycle:** Full CRUD for posts with a Draft/Published state workflow.
+- **Granular Authorization:** Strict ownership rules; only creators can modify or publish content.
+- **Social Graph:** Fully optimized Follow/Unfollow system with duplicate prevention.
+- **Engagement:** Real-time like/unlike system with automated counter updates.
+- **Smart Discovery:** Paginated public listings with advanced filtering (author, tags, title) and multi-criteria sorting.
+- **Personalized Feed:** Aggregated content stream from the user and their followed accounts.
 
-## Tech Stack
+## 🛠 Tech Stack
 
 - **Runtime:** Node.js
 - **Framework:** Express.js
 - **Database:** MongoDB (Mongoose ODM)
-- **Authentication:** JWT, bcrypt
-- **Environment Variables:** dotenv
-- **Testing:** Jest, Supertest, mongodb‑memory‑server
+- **Testing:** Jest, Supertest, `mongodb-memory-server`
+- **Security:** JWT, Dotenv, Bcrypt
 
-## Installation
+---
 
-1. Clone the repository:
-   \`\`\`bash
+## 📥 Installation & Setup
+
+1. **Clone the repository:**
+   ```bash
    git clone https://github.com/your-username/social-app-api.git
    cd social-app-api
-   \`\`\`
+   ```
 
-2. Install dependencies:
-   \`\`\`bash
+2. **Install dependencies:**
+   ```bash
    npm install
-   \`\`\`
+   ```
 
-3. Create a \`.env\` file in the root (see \`.env.example\` for required variables):
-   \`\`\`
+3. **Configure Environment:**
+   Create a `.env` file in the root directory:
+   ```env
    PORT=3000
    NODE_ENV=development
-   MONGODB_URI=mongodb://localhost:27017/social-app   # or your Atlas URI
-   JWT_SECRET=your_random_secret_string
-   \`\`\`
+   MONGODB_URI=your_mongodb_uri
+   JWT_SECRET=your_secure_random_string
+   ```
 
-4. Start the server:
-   \`\`\`bash
-   npm run dev      # development (nodemon)
-   \`\`\`
-   Or for production:
-   \`\`\`bash
-   npm start
-   \`\`\`
-   The API will be running at \`http://localhost:3000\`.
+4. **Launch:**
+   ```bash
+   npm run dev  # Development mode
+   npm start    # Production mode
+   ```
 
-## API Documentation
+---
+
+## 📑 API Documentation
 
 ### Authentication
-| Method | Endpoint          | Access     | Purpose                |
-|--------|-------------------|------------|------------------------|
-| POST   | /auth/signup      | Public     | Register a new user    |
-| POST   | /auth/signin      | Public     | Login, receive JWT token |
 
-### Posts
-| Method | Endpoint              | Access        | Purpose                              |
-|--------|-----------------------|---------------|--------------------------------------|
-| GET    | /posts                | Public        | List published posts (paginated)     |
-| GET    | /posts/:id            | Public        | Get a published post + author info   |
-| POST   | /posts                | Authenticated | Create a new post (draft)            |
-| PATCH  | /posts/:id            | Owner only    | Edit post (title, content, tags)     |
-| DELETE | /posts/:id            | Owner only    | Delete a post                        |
-| PUT    | /posts/:id/publish    | Owner only    | Publish a draft post                 |
+| Method | Endpoint | Access | Purpose |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/auth/signup` | Public | Register a new user |
+| `POST` | `/auth/signin` | Public | Receive JWT token |
 
-### Me (Authenticated User)
-| Method | Endpoint                | Access        | Purpose                               |
-|--------|-------------------------|---------------|---------------------------------------|
-| GET    | /me/posts               | Authenticated | Get my posts (filterable by state)    |
-| POST   | /me/follow/:userId      | Authenticated | Follow a user                         |
-| DELETE | /me/follow/:userId      | Authenticated | Unfollow a user                       |
-| GET    | /me/following           | Authenticated | List users I follow                   |
-| GET    | /me/followers           | Authenticated | List users following me               |
+### Posts & Discovery
 
-### Likes
-| Method | Endpoint              | Access        | Purpose          |
-|--------|-----------------------|---------------|------------------|
-| POST   | /posts/:id/like       | Authenticated | Like a post      |
-| DELETE | /posts/:id/like       | Authenticated | Unlike a post    |
+| Method | Endpoint | Access | Purpose |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/posts` | Public | List published posts (paginated) |
+| `GET` | `/posts/:id` | Public | Detailed post view + author info |
+| `POST` | `/posts` | Auth | Create a draft post |
+| `PATCH` | `/posts/:id` | Owner | Edit title, content, or tags |
+| `PUT` | `/posts/:id/publish` | Owner | Move draft to public state |
+| `DELETE` | `/posts/:id` | Owner | Permanent removal |
 
-### Feed
-| Method | Endpoint | Access        | Purpose                               |
-|--------|----------|---------------|---------------------------------------|
-| GET    | /feed    | Authenticated | Personalized feed (self + followed)   |
+### Social & Interactions
 
-### Query Parameters for GET /posts & GET /me/posts
-- **page** – page number (default 1)
-- **limit** – posts per page (default 20)
-- **state** – for /me/posts only: "draft" or "published"
-- **author** – search by author name (case‑insensitive)
-- **title** – search by title keyword (case‑insensitive)
-- **tags** – comma‑separated list (e.g., ?tags=tech,news)
-- **sort** – field: "like_count", "comment_count", or "timestamp"
-- **order** – "asc" or "desc" (default desc)
+| Method | Endpoint | Access | Purpose |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/me/posts` | Auth | View personal drafts/published posts |
+| `POST` | `/me/follow/:id` | Auth | Follow a user |
+| `GET` | `/feed` | Auth | View personalized social feed |
+| `POST` | `/posts/:id/like` | Auth | Like a post |
 
-## Testing
+---
 
-The project includes a comprehensive test suite using Jest and Supertest.  
-It uses an in‑memory MongoDB database, so no external database is needed for testing.
+## 🧪 Testing Suite
+This project maintains high code reliability through an automated testing pipeline.
+- **Coverage:** Auth validation, CRUD ownership, Edge-case follow logic, Feed aggregation.
+- **Tooling:** Jest & Supertest.
+- **Database:** Uses an isolated In-memory MongoDB for clean test runs.
 
-Run the tests:
-\`\`\`bash
+```bash
 npm test
-\`\`\`
+```
 
-Tests cover:
-- Authentication (signup, signin, token validation)
-- Post CRUD & ownership rules
-- Public listing, search, sort, pagination
-- Follow / unfollow logic and rules
-- Like / unlike logic and count updates
-- Personalized feed
-- Authorization and validation errors
+---
 
-## Hosted API
+## 🔗 Project Links
+- **Live API:** [View Hosted Demo]()
+- **Developer:** OKWOR KINGDAVID
+- **Brand:** TIMДА
 
-**Live URL:**  [https://social-app-api-hp49.onrender.com] 
-
-## GitHub Repository
-
-**Repo URL:** [https://github.com/your-username/social-app-api]
-
-## License
-
-ISC
+---
+*License: ISC | Built for Scalability.*
